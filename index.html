@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Топ-5 мест для путешествий - Фотогалерея</title>
+    <style>
+        /* Подключение шрифтов */
+        @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Roboto+Slab:wght@400;600&display=swap');
+        
+        /* Подключение локальных шрифтов */
+        @font-face {
+            font-family: 'Crooker';
+            src: url('./fonts/Crooker.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Lineyka';
+            src: url('./fonts/Lineyka.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lineyka', 'Roboto Slab', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        /* Заголовки шрифтом Crooker */
+        h1, h2, h3, .place h2 {
+            font-family: 'Crooker', 'Lobster', 'cursive';
+            letter-spacing: 2px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            margin-bottom: 10px;
+            color: #ffd700;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            word-break: break-word;
+        }
+        
+        header p {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Карточка города */
+        .place {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .place:hover {
+            transform: translateY(-5px);
+        }
+        
+        .place h2 {
+            font-size: clamp(1.3rem, 5vw, 2.2rem);
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-left: 12px;
+            border-left: 4px solid #ffd700;
+            word-break: break-word;
+        }
+        
+        .place p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+        }
+        
+        /* Стили карусели - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+        .carousel {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #000;
+        }
+        
+        /* Горизонтальный контейнер для изображений */
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            border-radius: 15px;
+        }
+        
+        /* Стилизация скроллбара */
+        .carousel-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .carousel-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        
+        .carousel-container::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 10px;
+        }
+        
+        .carousel-slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            box-sizing: border-box;
+        }
+        
+        .carousel-slide img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Кнопки навигации */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .carousel-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .carousel-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(0,0,0,0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        @media (hover: none) {
+            .carousel-btn:hover {
+                transform: translateY(-50%);
+            }
+            .place:hover {
+                transform: none;
+            }
+        }
+        
+        .btn-prev {
+            left: 10px;
+        }
+        
+        .btn-next {
+            right: 10px;
+        }
+        
+        /* Индикаторы (точки) */
+        .carousel-dots {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
+        
+        .dot.active {
+            background: #ffd700;
+            transform: scale(1.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+        }
+        
+        footer p {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            word-break: break-word;
+        }
+        
+        /* Адаптивные брейкпоинты */
+        @media (max-width: 992px) {
+            body {
+                padding: 12px;
+            }
+            .place {
+                margin-bottom: 30px;
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            header {
+                padding: 20px 12px;
+                margin-bottom: 25px;
+            }
+            .place {
+                border-radius: 15px;
+                margin-bottom: 25px;
+                padding: 12px;
+            }
+            footer {
+                padding: 20px;
+                margin-top: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            header {
+                padding: 15px 10px;
+                border-radius: 15px;
+                margin-bottom: 20px;
+            }
+            .place {
+                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+            }
+            .place h2 {
+                margin-bottom: 10px;
+                padding-left: 8px;
+                border-left-width: 3px;
+            }
+            footer {
+                padding: 15px;
+                border-radius: 15px;
+                margin-top: 25px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .carousel-dots {
+                gap: 4px;
+            }
+            .dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+        
+        @media (pointer: coarse) {
+            .carousel-btn {
+                opacity: 0.8;
+            }
+        }
+        
+        @media (max-width: 900px) and (orientation: landscape) {
+            .carousel-slide img {
+                max-height: 70vh;
+            }
+        }
+        
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+            .place {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🌍 Топ-5 мест для путешествия</h1>
+        <p>Куда стоит поехать в 2026 году | Фотогалерея каждого места</p>
+    </header>
+
+    <!-- Исландия -->
+    <div class="place" id="place-iceland">
+        <h2>1. Исландия — страна льда и огня</h2>
+        <p>Удивительные водопады, гейзеры, северное сияние и горячие источники. Исландия — настоящая сказка для любителей природы.</p>
+        <div class="carousel" data-city="iceland">
+            <div class="carousel-container"></div>
+            <button class="carousel-btn btn-prev" aria-label="Предыдущее фото">❮</button>
+            <button class="carousel-btn btn-next" aria-label="Следующее фото">❯</button>
+            <div class="carousel-dots"></div>
+        </div>
+    </div>
+
+    <!-- Япония -->
+    <div class="place" id="place-japan">
+        <h2>2. Япония — традиции и футуризм</h2>
+        <p>Токио, Киото, сакура, самураи и вкуснейшая еда. Япония удивляет сочетанием древности и высоких технологий.</p>
+        <div class="carousel" data-city="japan">
+            <div class="carousel-container"></div>
+            <button class="carousel-btn btn-prev" aria-label="Предыдущее фото">❮</button>
+            <button class="carousel-btn btn-next" aria-label="Следующее фото">❯</button>
+            <div class="carousel-dots"></div>
+        </div>
+    </div>
+
+    <!-- Италия -->
+    <div class="place" id="place-italy">
+        <h2>3. Италия — искусство, море и паста</h2>
+        <p>Рим, Флоренция, Венеция и побережье Амальфи. Италия — это любовь с первого взгляда и вкуснейшая кухня.</p>
+        <div class="carousel" data-city="italy">
+            <div class="carousel-container"></div>
+            <button class="carousel-btn btn-prev" aria-label="Предыдущее фото">❮</button>
+            <button class="carousel-btn btn-next" aria-label="Следующее фото">❯</button>
+            <div class="carousel-dots"></div>
+        </div>
+    </div>
+
+    <!-- Новая Зеландия -->
+    <div class="place" id="place-newzealand">
+        <h2>4. Новая Зеландия — природа как в кино</h2>
+        <p>Здесь снимали "Властелина колец". Горы, фьорды, озера и зелень — рай для фотографов и путешественников.</p>
+        <div class="carousel" data-city="newzealand">
+            <div class="carousel-container"></div>
+            <button class="carousel-btn btn-prev" aria-label="Предыдущее фото">❮</button>
+            <button class="carousel-btn btn-next" aria-label="Следующее фото">❯</button>
+            <div class="carousel-dots"></div>
+        </div>
+    </div>
+
+    <!-- Мексика -->
+    <div class="place" id="place-mexico">
+        <h2>5. Мексика — яркие краски и древние цивилизации</h2>
+        <p>Пляжи Карибского моря, пирамиды майя, кактусы и острая кухня. Мексика — страна вечного праздника.</p>
+        <div class="carousel" data-city="mexico">
+            <div class="carousel-container"></div>
+            <button class="carousel-btn btn-prev" aria-label="Предыдущее фото">❮</button>
+            <button class="carousel-btn btn-next" aria-label="Следующее фото">❯</button>
+            <div class="carousel-dots"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>________________________________________________</p>
+    </footer>
+</div>
+
+<script>
+    const citiesConfig = {
+        iceland: {
+            images: [
+                'img/Island.avif',
+                'img/Island_2.webp',
+                'img/Island_3.jpg',
+                'img/Island_4.jpg',
+                'img/Island_5.jpg'
+            ]
+        },
+        japan: {
+            images: [
+                'img/Japan.jpg',
+                'img/Japan_2.jpg',
+                'img/Japan_3.jpg',
+                'img/Japan_4.png',
+                'img/Japan_5.webp'
+            ]
+        },
+        italy: {
+            images: [
+                'img/Itali.png',
+                'img/Itali_2.jpg',
+                'img/Itali_3.jpg',
+                'img/Itali_4.jpg',
+                'img/Itali_5.jpg'
+            ]
+        },
+        newzealand: {
+            images: [
+                'img/New_Zeland.jpg',
+                'img/New_Zeland_2.jpg',
+                'img/New_Zeland_3.jpg',
+                'img/New_Zeland_4.jpg',
+                'img/New_Zeland_5.jpg'
+            ]
+        },
+        mexico: {
+            images: [
+                'img/Mexico.jpg',
+                'img/Mexico_2.webp',
+                'img/Mexico_3.webp',
+                'img/Mexico_4.jpg',
+                'img/Mexico_5.jpg'
+            ]
+        }
+    };
+
+    function initCarousel(carouselElement, cityName) {
+        const images = citiesConfig[cityName]?.images || [];
+        if (images.length === 0) {
+            carouselElement.innerHTML = '<div style="padding: 20px; text-align: center;">Фотографии не загружены</div>';
+            return;
+        }
+
+        const container = carouselElement.querySelector('.carousel-container');
+        const dotsContainer = carouselElement.querySelector('.carousel-dots');
+        const prevBtn = carouselElement.querySelector('.btn-prev');
+        const nextBtn = carouselElement.querySelector('.btn-next');
+        
+        let currentIndex = 0;
+        
+        container.innerHTML = '';
+        dotsContainer.innerHTML = '';
+        
+        // Создаем слайды
+        images.forEach((imgSrc, idx) => {
+            const slide = document.createElement('div');
+            slide.className = 'carousel-slide';
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = `${cityName} фото ${idx + 1}`;
+            img.loading = 'lazy';
+            img.onerror = function() {
+                this.src = 'https://via.placeholder.com/600x350?text=Фото+не+найдено';
+                this.style.objectFit = 'contain';
+            };
+            slide.appendChild(img);
+            container.appendChild(slide);
+            
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            if (idx === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(idx));
+            dot.setAttribute('aria-label', `Перейти к фото ${idx + 1}`);
+            dotsContainer.appendChild(dot);
+        });
+        
+        function updateActiveDot() {
+            const scrollLeft = container.scrollLeft;
+            const slideWidth = container.clientWidth;
+            const newIndex = Math.round(scrollLeft / slideWidth);
+            currentIndex = newIndex;
+            
+            const dots = dotsContainer.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= images.length) index = images.length - 1;
+            currentIndex = index;
+            const slideWidth = container.clientWidth;
+            container.scrollTo({
+                left: slideWidth * currentIndex,
+                behavior: 'smooth'
+            });
+            updateActiveDot();
+        }
+        
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+        
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+        
+        // Обработчики для кнопок
+        const newPrevBtn = prevBtn.cloneNode(true);
+        const newNextBtn = nextBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+        
+        newPrevBtn.addEventListener('click', prevSlide);
+        newNextBtn.addEventListener('click', nextSlide);
+        
+        // Отслеживаем скролл для обновления точек
+        container.addEventListener('scroll', () => {
+            clearTimeout(container.scrollTimeout);
+            container.scrollTimeout = setTimeout(updateActiveDot, 100);
+        });
+        
+        window.addEventListener('resize', () => {
+            updateActiveDot();
+        });
+        
+        updateActiveDot();
+    }
+    
+    document.querySelectorAll('.carousel').forEach(carousel => {
+        const cityName = carousel.dataset.city;
+        if (cityName) {
+            initCarousel(carousel, cityName);
+        }
+    });
+</script>
+</body>
+</html>
